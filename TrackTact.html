@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrackTact Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9fb;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #6a5acd;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+    }
+    .section {
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      color: #4b0082;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f0f0ff;
+    }
+    .score {
+      font-weight: bold;
+    }
+    .excellent { color: green; }
+    .moderate { color: orange; }
+    .needs-improvement { color: red; }
+  </style>
+</head>
+<body>
+  <header>TrackTact  Smart Budget Dashboard</header>
+
+  <div class="section">
+    <div class="card">
+      <h2>1. Saver Score Summary</h2>
+      <table>
+        <tr><th>Name</th><th>Average Weekly Spend (₹)</th><th>Saver Score</th></tr>
+        <tr><td>Devika</td><td>105.33</td><td class="score excellent">🌟 Excellent Saver</td></tr>
+        <tr><td>Ardra</td><td>389.00</td><td class="score needs-improvement">⚠️ Needs Improvement</td></tr>
+        <tr><td>Sam</td><td>163.00</td><td class="score moderate">👍 Moderate Saver</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>2. Forecasted Week 4 Spending</h2>
+      <table>
+        <tr><th>Name</th><th>Predicted Total (₹)</th></tr>
+        <tr><td>Devika</td><td>89.67</td></tr>
+        <tr><td>Ardra</td><td>425.33</td></tr>
+        <tr><td>Sam</td><td>147.33</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>3. Anomalies Detected</h2>
+      <ul>
+        <li> <strong>Sam - Bus Cost ₹120</strong>: Higher than average travel expense</li>
+        <li> <strong>Ardra - Snacks ₹20</strong>: Unusually low for typical range</li>
+        <li> <strong>Ardra - Grocery ₹300</strong>: Significant spike</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>4. Smart Suggestions </h2>
+      <ul>
+        <li><strong>Devika</strong>: Maintain habits, slight snack review</li>
+        <li><strong>Ardra</strong>: Bulk groceries + explore budget transport</li>
+        <li><strong>Sam</strong>: Steady, but watch snack + local travel mix</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
