@@ -3,99 +3,437 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TrackTact Dashboard</title>
+  <title>TrackTact — Smart Budget Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #1C1A18;
+      --surface:  #252220;
+      --surface2: #2E2B28;
+      --border:   #3A3633;
+      --rg:       #C9956A;
+      --rg-light: #E8C4A0;
+      --rg-dim:   #7A5A3C;
+      --text:     #F2EDE8;
+      --muted:    #8A8078;
+      --danger:   #E07070;
+      --success:  #7EC8A0;
+      --warn:     #E0B870;
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9f9fb;
-      color: #333;
-      margin: 0;
-      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 3rem;
     }
-    header {
-      background-color: #6a5acd;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      font-size: 2rem;
+
+    /* ── Topbar ── */
+    .topbar {
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .section {
-      padding: 2rem;
-      max-width: 900px;
-      margin: auto;
+    .logo { font-size: 20px; font-weight: 700; letter-spacing: -.4px; }
+    .logo span { color: var(--rg); }
+    .live { display: flex; align-items: center; gap: 8px; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
+    .live-label { font-size: 12px; color: var(--muted); }
+
+    /* ── Layout ── */
+    .wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── Stat cards ── */
+    .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 2rem; }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
     }
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+    .stat-val { font-size: 30px; font-weight: 700; color: var(--rg-light); line-height: 1; }
+    .stat-val.danger { color: var(--danger); }
+    .stat-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    /* ── Chart cards ── */
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
       padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
-    h2 {
-      color: #4b0082;
+    .chart-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px; }
+    .chart-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .chart-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; }
+    .leg { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+    .leg-sq { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+    .chart-wrap { position: relative; width: 100%; height: 260px; }
+    .chart-wrap-sm { position: relative; width: 100%; height: 210px; }
+
+    /* ── Input section ── */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
     }
-    table {
+    .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 14px; }
+    .inp-head {
+      display: grid;
+      grid-template-columns: 130px 1fr 1fr 1fr 95px;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .inp-col { font-size: 11px; color: var(--muted); text-align: center; }
+    .user-row {
+      display: grid;
+      grid-template-columns: 130px 1fr 1fr 1fr 95px;
+      gap: 8px;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .user-row:last-of-type { border-bottom: none; }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .av-d { background: #3A2E25; color: var(--rg); }
+    .av-a { background: #3A2529; color: var(--danger); }
+    .av-s { background: #253A2E; color: var(--success); }
+    .user-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .user-total { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .spend-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--text);
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
+      text-align: center;
     }
-    th, td {
-      padding: 0.75rem;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
+    .spend-input:focus { outline: none; border-color: var(--rg); background: #2E2A26; }
+    .score-pill {
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 20px;
+      text-align: center; white-space: nowrap;
     }
-    th {
-      background-color: #f0f0ff;
+    .pill-g { background: #1E3028; color: var(--success); }
+    .pill-a { background: #33280E; color: var(--warn); }
+    .pill-r { background: #33181A; color: var(--danger); }
+    .calc-btn {
+      width: 100%; background: var(--rg); color: #1C1A18;
+      border: none; border-radius: 10px; padding: 12px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      margin-top: 16px; letter-spacing: .02em; transition: background .15s;
     }
-    .score {
-      font-weight: bold;
+    .calc-btn:hover { background: var(--rg-light); }
+
+    /* ── Bottom grid ── */
+    .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+    .anomaly-item, .sug-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
     }
-    .excellent { color: green; }
-    .moderate { color: orange; }
-    .needs-improvement { color: red; }
+    .anomaly-item:last-child, .sug-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .a-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 14px;
+    }
+    .a-icon.h { background: #33181A; color: var(--danger); }
+    .a-icon.l { background: #33280E; color: var(--warn); }
+    .a-icon.ok { background: #1E3028; color: var(--success); }
+    .a-title { font-size: 13px; font-weight: 500; color: var(--text); }
+    .a-sub { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+    .sug-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .sug-text strong { color: var(--rg-light); font-weight: 600; }
+
+    @media (max-width: 600px) {
+      .stat-row { grid-template-columns: 1fr; }
+      .inp-head, .user-row { grid-template-columns: 1fr 1fr 1fr; }
+      .inp-head > :first-child, .user-row > :first-child,
+      .inp-head > :last-child, .user-row > :last-child { display: none; }
+    }
   </style>
 </head>
 <body>
-  <header>TrackTact  Smart Budget Dashboard</header>
 
-  <div class="section">
-    <div class="card">
-      <h2>1. Saver Score Summary</h2>
-      <table>
-        <tr><th>Name</th><th>Average Weekly Spend (₹)</th><th>Saver Score</th></tr>
-        <tr><td>Devika</td><td>105.33</td><td class="score excellent">🌟 Excellent Saver</td></tr>
-        <tr><td>Ardra</td><td>389.00</td><td class="score needs-improvement">⚠️ Needs Improvement</td></tr>
-        <tr><td>Sam</td><td>163.00</td><td class="score moderate">👍 Moderate Saver</td></tr>
-      </table>
+<div class="topbar">
+  <div class="logo">Track<span>Tact</span></div>
+  <div class="live">
+    <span class="live-dot"></span>
+    <span class="live-label">Live analysis</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Stat cards -->
+  <div class="stat-row" id="statRow">
+    <div class="stat">
+      <div class="stat-label">Lowest spender</div>
+      <div class="stat-val" id="s-low">Devika</div>
+      <div class="stat-sub" id="s-low-val">₹105 / week</div>
     </div>
-
-    <div class="card">
-      <h2>2. Forecasted Week 4 Spending</h2>
-      <table>
-        <tr><th>Name</th><th>Predicted Total (₹)</th></tr>
-        <tr><td>Devika</td><td>89.67</td></tr>
-        <tr><td>Ardra</td><td>425.33</td></tr>
-        <tr><td>Sam</td><td>147.33</td></tr>
-      </table>
+    <div class="stat">
+      <div class="stat-label">Group average</div>
+      <div class="stat-val" id="s-avg">₹219</div>
+      <div class="stat-sub">across 3 members</div>
     </div>
-
-    <div class="card">
-      <h2>3. Anomalies Detected</h2>
-      <ul>
-        <li> <strong>Sam - Bus Cost ₹120</strong>: Higher than average travel expense</li>
-        <li> <strong>Ardra - Snacks ₹20</strong>: Unusually low for typical range</li>
-        <li> <strong>Ardra - Grocery ₹300</strong>: Significant spike</li>
-      </ul>
-    </div>
-
-    <div class="card">
-      <h2>4. Smart Suggestions </h2>
-      <ul>
-        <li><strong>Devika</strong>: Maintain habits, slight snack review</li>
-        <li><strong>Ardra</strong>: Bulk groceries + explore budget transport</li>
-        <li><strong>Sam</strong>: Steady, but watch snack + local travel mix</li>
-      </ul>
+    <div class="stat">
+      <div class="stat-label">Highest spender</div>
+      <div class="stat-val danger" id="s-high">Ardra</div>
+      <div class="stat-sub" id="s-high-val">₹389 / week</div>
     </div>
   </div>
+
+  <!-- Bar chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Weekly spend by category</div>
+        <div class="chart-sub">Snacks · Travel · Grocery — current week</div>
+      </div>
+      <div class="legend">
+        <span class="leg"><span class="leg-sq" style="background:#C9956A"></span>Snacks</span>
+        <span class="leg"><span class="leg-sq" style="background:#7EC8A0"></span>Travel</span>
+        <span class="leg"><span class="leg-sq" style="background:#E07070"></span>Grocery</span>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="barChart" role="img" aria-label="Grouped bar chart of snacks, travel, grocery spend for Devika, Ardra, Sam">Spending breakdown per category</canvas>
+    </div>
+  </div>
+
+  <!-- Forecast chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">Forecasted week 4 total</div>
+        <div class="chart-sub">Projected from current spending trajectory</div>
+      </div>
+      <div class="legend">
+        <span class="leg"><span class="leg-sq" style="background:#C9956A"></span>Devika</span>
+        <span class="leg"><span class="leg-sq" style="background:#E07070"></span>Ardra</span>
+        <span class="leg"><span class="leg-sq" style="background:#7EC8A0"></span>Sam</span>
+      </div>
+    </div>
+    <div class="chart-wrap-sm">
+      <canvas id="forecastChart" role="img" aria-label="Forecast bar chart for week 4 spending">Forecast totals week 4</canvas>
+    </div>
+  </div>
+
+  <!-- Input section -->
+  <div class="section-card">
+    <div class="section-title">Edit spending values</div>
+    <div class="inp-head">
+      <div></div>
+      <div class="inp-col">Snacks (₹)</div>
+      <div class="inp-col">Travel (₹)</div>
+      <div class="inp-col">Grocery (₹)</div>
+      <div></div>
+    </div>
+    <div class="user-row">
+      <div class="user-info">
+        <div class="avatar av-d">D</div>
+        <div><div class="user-name">Devika</div><div class="user-total" id="d-total">₹105</div></div>
+      </div>
+      <input class="spend-input" type="number" id="d-snack" value="35" min="0" step="1" aria-label="Devika snacks">
+      <input class="spend-input" type="number" id="d-travel" value="30" min="0" step="1" aria-label="Devika travel">
+      <input class="spend-input" type="number" id="d-grocery" value="40" min="0" step="1" aria-label="Devika grocery">
+      <span class="score-pill pill-g" id="d-pill">Excellent</span>
+    </div>
+    <div class="user-row">
+      <div class="user-info">
+        <div class="avatar av-a">A</div>
+        <div><div class="user-name">Ardra</div><div class="user-total" id="a-total">₹389</div></div>
+      </div>
+      <input class="spend-input" type="number" id="a-snack" value="20" min="0" step="1" aria-label="Ardra snacks">
+      <input class="spend-input" type="number" id="a-travel" value="69" min="0" step="1" aria-label="Ardra travel">
+      <input class="spend-input" type="number" id="a-grocery" value="300" min="0" step="1" aria-label="Ardra grocery">
+      <span class="score-pill pill-r" id="a-pill">Needs work</span>
+    </div>
+    <div class="user-row">
+      <div class="user-info">
+        <div class="avatar av-s">S</div>
+        <div><div class="user-name">Sam</div><div class="user-total" id="s-total">₹163</div></div>
+      </div>
+      <input class="spend-input" type="number" id="s-snack" value="30" min="0" step="1" aria-label="Sam snacks">
+      <input class="spend-input" type="number" id="s-travel" value="120" min="0" step="1" aria-label="Sam travel">
+      <input class="spend-input" type="number" id="s-grocery" value="13" min="0" step="1" aria-label="Sam grocery">
+      <span class="score-pill pill-a" id="s-pill">Moderate</span>
+    </div>
+    <button class="calc-btn" onclick="recalculate()">
+      <i class="ti ti-refresh" style="font-size:14px;vertical-align:-2px;margin-right:6px"></i>
+      Recalculate dashboard
+    </button>
+  </div>
+
+  <!-- Anomalies + Suggestions -->
+  <div class="grid2">
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-title">Anomalies detected</div>
+      <div id="anomalyList"></div>
+    </div>
+    <div class="section-card" style="margin-bottom:0">
+      <div class="section-title">Smart suggestions</div>
+      <div id="suggestList"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+  let barChart, forecastChart;
+  const C = {
+    rg: '#C9956A', green: '#7EC8A0', red: '#E07070',
+    warn: '#E0B870', muted: '#8A8078', text: '#F2EDE8', border: '#3A3633'
+  };
+
+  function g(id) { return Math.max(0, parseFloat(document.getElementById(id).value) || 0); }
+  function getVals() {
+    return {
+      d: { snack: g('d-snack'), travel: g('d-travel'), grocery: g('d-grocery') },
+      a: { snack: g('a-snack'), travel: g('a-travel'), grocery: g('a-grocery') },
+      s: { snack: g('s-snack'), travel: g('s-travel'), grocery: g('s-grocery') }
+    };
+  }
+  function total(u) { return u.snack + u.travel + u.grocery; }
+  function forecast(t) { return Math.round(t * 0.95); }
+
+  function saverClass(t, avg) {
+    if (t < avg * 0.75) return ['Excellent', 'pill-g'];
+    if (t < avg * 1.1)  return ['Moderate',  'pill-a'];
+    return ['Needs work', 'pill-r'];
+  }
+
+  function recalculate() {
+    const v = getVals();
+    const td = total(v.d), ta = total(v.a), ts = total(v.s);
+    const avg = Math.round((td + ta + ts) / 3);
+
+    document.getElementById('d-total').textContent = '₹' + td;
+    document.getElementById('a-total').textContent = '₹' + ta;
+    document.getElementById('s-total').textContent = '₹' + ts;
+
+    [['d', td], ['a', ta], ['s', ts]].forEach(([k, t]) => {
+      const [lbl, cls] = saverClass(t, avg);
+      const p = document.getElementById(k + '-pill');
+      p.textContent = lbl;
+      p.className = 'score-pill ' + cls;
+    });
+
+    const members = [{ n: 'Devika', t: td }, { n: 'Ardra', t: ta }, { n: 'Sam', t: ts }];
+    const low  = members.reduce((a, b) => b.t < a.t ? b : a);
+    const high = members.reduce((a, b) => b.t > a.t ? b : a);
+    document.getElementById('s-low').textContent  = low.n;
+    document.getElementById('s-low-val').textContent  = '₹' + low.t  + ' / week';
+    document.getElementById('s-high').textContent = high.n;
+    document.getElementById('s-high-val').textContent = '₹' + high.t + ' / week';
+    document.getElementById('s-avg').textContent  = '₹' + avg;
+
+    barChart.data.datasets[0].data = [v.d.snack, v.a.snack, v.s.snack];
+    barChart.data.datasets[1].data = [v.d.travel, v.a.travel, v.s.travel];
+    barChart.data.datasets[2].data = [v.d.grocery, v.a.grocery, v.s.grocery];
+    barChart.update();
+
+    forecastChart.data.datasets[0].data = [forecast(td), forecast(ta), forecast(ts)];
+    forecastChart.update();
+
+    const avgSn = (v.d.snack  + v.a.snack  + v.s.snack)  / 3;
+    const avgTr = (v.d.travel + v.a.travel + v.s.travel) / 3;
+    const avgGr = (v.d.grocery+ v.a.grocery+ v.s.grocery)/ 3;
+    const anomalies = [];
+    [{ n: 'Devika', v: v.d }, { n: 'Ardra', v: v.a }, { n: 'Sam', v: v.s }].forEach(u => {
+      if (u.v.travel  > avgTr * 1.5 && avgTr > 10) anomalies.push({ t: 'h', title: u.n + ' — Travel ₹'  + u.v.travel,  sub: 'Higher than group average travel expense' });
+      if (u.v.snack   < avgSn * 0.4 && avgSn > 10) anomalies.push({ t: 'l', title: u.n + ' — Snacks ₹'  + u.v.snack,   sub: 'Unusually low for typical range' });
+      if (u.v.grocery > avgGr * 1.6 && avgGr > 10) anomalies.push({ t: 'h', title: u.n + ' — Grocery ₹' + u.v.grocery, sub: 'Significant spike detected' });
+    });
+    if (!anomalies.length) anomalies.push({ t: 'ok', title: 'No anomalies found', sub: 'All spending looks consistent this week' });
+
+    document.getElementById('anomalyList').innerHTML = anomalies.map(a => `
+      <div class="anomaly-item">
+        <div class="a-icon ${a.t}">
+          <i class="ti ti-${a.t === 'h' ? 'arrow-up' : a.t === 'l' ? 'arrow-down' : 'check'}"></i>
+        </div>
+        <div>
+          <div class="a-title">${a.title}</div>
+          <div class="a-sub">${a.sub}</div>
+        </div>
+      </div>`).join('');
+
+    document.getElementById('suggestList').innerHTML =
+      [{ n: 'Devika', av: 'av-d', t: td }, { n: 'Ardra', av: 'av-a', t: ta }, { n: 'Sam', av: 'av-s', t: ts }].map(u => {
+        const vv = u.n === 'Devika' ? v.d : u.n === 'Ardra' ? v.a : v.s;
+        const tip = u.t < avg * 0.75
+          ? 'Solid habits — a minor snack review could save even more.'
+          : vv.grocery > 200
+            ? 'Try bulk grocery shopping to lower per-unit costs.'
+            : vv.travel > 100
+              ? 'Explore public transport or carpooling to cut travel.'
+              : 'Spending is steady — maintain current patterns.';
+        return `<div class="sug-item">
+          <div class="avatar ${u.av}" style="width:28px;height:28px;font-size:11px;flex-shrink:0">${u.n[0]}</div>
+          <div class="sug-text"><strong>${u.n}:</strong> ${tip}</div>
+        </div>`;
+      }).join('');
+  }
+
+  const chartOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: C.muted, font: { size: 12 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: C.muted, font: { size: 11 }, callback: v => '₹' + v } }
+    }
+  };
+
+  const v0 = getVals();
+  barChart = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Devika', 'Ardra', 'Sam'],
+      datasets: [
+        { label: 'Snacks',  data: [v0.d.snack,  v0.a.snack,  v0.s.snack],  backgroundColor: C.rg,    borderRadius: 5 },
+        { label: 'Travel',  data: [v0.d.travel, v0.a.travel, v0.s.travel], backgroundColor: C.green, borderRadius: 5 },
+        { label: 'Grocery', data: [v0.d.grocery,v0.a.grocery,v0.s.grocery],backgroundColor: C.red,   borderRadius: 5 }
+      ]
+    },
+    options: { ...chartOpts }
+  });
+
+  forecastChart = new Chart(document.getElementById('forecastChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Devika', 'Ardra', 'Sam'],
+      datasets: [{
+        label: 'Forecast (₹)',
+        data: [forecast(total(v0.d)), forecast(total(v0.a)), forecast(total(v0.s))],
+        backgroundColor: [C.rg, C.red, C.green],
+        borderRadius: 5
+      }]
+    },
+    options: { ...chartOpts }
+  });
+
+  recalculate();
+</script>
 </body>
 </html>
